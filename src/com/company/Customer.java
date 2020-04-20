@@ -13,10 +13,12 @@ public class Customer {
     private String lastName;
     private String city;
     private String adress;
+    private Location location;
 
     public Customer(int id) {
         this.id = id;
         initCustomer();
+        addLocation();
     }
 
     public Customer(String firstName, String lastName, String placeOfDelivery, String adress) {
@@ -24,6 +26,7 @@ public class Customer {
         this.lastName = lastName;
         this.city = placeOfDelivery;
         this.adress = adress;
+        addLocation();
     }
 
     private void initCustomer() {
@@ -51,6 +54,11 @@ public class Customer {
         this.id = getIdFromDb("SELECT `id` FROM `customer` " +
                 "WHERE `first_name` = '" + this.firstName + "' AND `last_name` = '" + this.lastName + "' " +
                 "AND `city` = '" + this.city + "' AND adress = '" + this.adress + "';");
+    }
+
+    public void addLocation() {
+        Location location = new Location(city);
+        this.location = location;
     }
 
     public void printOrders() {
@@ -168,5 +176,9 @@ public class Customer {
 
     public String getAdress() {
         return adress;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }

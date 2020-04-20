@@ -40,7 +40,7 @@ public class Dish {
     }
 
     public void addIngredient(Ingredient ingredient, Order order) {
-        order.setTotalPrice(ingredient.getPrice());
+        order.setTotalPrice(order.getTotalPrice() + ingredient.getPrice());
         ingredients.add(ingredient);
     }
 

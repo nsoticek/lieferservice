@@ -15,12 +15,13 @@ public class Order {
 
     public Order(Customer newCostumer) {
         this.newCostumer = newCostumer;
+        this.totalPrice += newCostumer.getLocation().getPrice();
         setLocationid();
     }
 
     public void addDish(Dish dish) {
-        this.dishes.add(dish);
         this.totalPrice += dish.getPrice();
+        this.dishes.add(dish);
     }
 
     public void addOrderToDb() {
@@ -56,7 +57,7 @@ public class Order {
         setIdFromDb(sqlCommand);
     }
 
-    private double calculateTotalAmount() {
+    public double calculateTotalAmount() {
         // Calculate the total amount of this Order
         double totalAmount = 0;
         for (int i = 0; i < dishes.size(); i++) {
@@ -136,12 +137,12 @@ public class Order {
         return newCostumer;
     }
 
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
     public ArrayList<Dish> getDishes() {
         return dishes;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
     }
 
     public void setTotalPrice(double totalPrice) {

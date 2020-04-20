@@ -100,7 +100,7 @@ public class Main {
                 // create new order and save it to the db
                 order.addOrderToDb();
                 order.printSuccessMessage();
-                createInvoice(order);
+                createInvoice(order, customer);
                 break;
             case 3: // Show user orders
                 customer.printOrders();
@@ -127,16 +127,18 @@ public class Main {
         return userInput;
     }
 
-    private static void createInvoice(Order order) {
+    private static void createInvoice(Order order, Customer customer) {
         System.out.println("---------Rechnung----------");
         // ACHTUNG printf noch anpassen, die Platzhalter!
         for (int i = 0; i < order.getDishes().size(); i++) {
             System.out.printf("%s\t\t%.2f€\n", order.getDishes().get(i).getType(), order.getDishes().get(i).getPrice());
             for (int j = 0; j < order.getDishes().get(i).getIngredients().size(); j++) {
-                System.out.printf("\t%s\t%.2f€\n", order.getDishes().get(i).getIngredients().get(j).getType(), order.getDishes().get(i).getIngredients().get(j).getPrice());
+                System.out.printf("\t%s\t%.2f€\n", order.getDishes().get(i).getIngredients().get(j).getType(),
+                        order.getDishes().get(i).getIngredients().get(j).getPrice());
             }
         }
         System.out.printf("----------------------------");
+        System.out.printf("\nLieferug\t\t\t%.2f€", customer.getLocation().getPrice());
         System.out.printf("\nGesamt\t\t\t\t%.2f€\n", order.getTotalPrice());
         System.out.println("----------------------------");
     }

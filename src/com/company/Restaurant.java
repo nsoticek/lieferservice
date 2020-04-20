@@ -13,13 +13,6 @@ public class Restaurant {
         this.name = name;
     }
 
-    /*
-    public void newOrder(Dish dish) {
-        String sqlInsertDeliveryPrice = "INSERT INTO `order_table`(`customer`, `total_price`, `delivery_cost`) " +
-                "VALUES ()";
-    }
-     */
-
     public void showDishcard() {
         String sqlCommand = "SELECT `id`, `name`, `price` FROM `dish`";
         printDishcard(sqlCommand);
