@@ -95,7 +95,7 @@ public class Main {
                 // Save order to the db
                 orderDb.insertOrder(order, dbConnector);
                 orderDb.insertDishAndIngredient(order, dbConnector);
-                createInvoice(order, customer);
+                createInvoice(order);
                 break;
             case "3": // Show user orders
                 CustomerController.printOrders(orderDb, customer,dbConnector);
@@ -106,7 +106,7 @@ public class Main {
         }
     }
 
-    private static void createInvoice(Order order, Customer customer) {
+    private static void createInvoice(Order order) {
         System.out.println("---------Rechnung----------");
         for (int i = 0; i < order.getDishes().size(); i++) {
             System.out.printf("%s\t\t%.2f€\n", order.getDishes().get(i).getType(), order.getDishes().get(i).getPrice());

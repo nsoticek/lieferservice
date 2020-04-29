@@ -2,45 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="87695865-e190-40f6-ab9d-1de1514b5dbf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/com/company/Controller/CustomerController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Controller/DishController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Controller/IngredientController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Controller/LoginController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Controller/OrderController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Controller/RegisterController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Controller/RestaurantController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/DbHelper/CustomerDb.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/DbHelper/DbConnector.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/DbHelper/DishDb.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/DbHelper/LocationDb.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/DbHelper/LoginDb.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/DbHelper/OrderDb.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/DbHelper/RegisterDb.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/DbHelper/RestaurantDb.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Models/Customer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Models/Dish.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Models/FullOrder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Models/Location.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Models/LoginPerson.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Models/Order.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/Models/RegisterPerson.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/Customer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/DbHelper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/Dish.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/Ingredient.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/Location.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/Order.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Übung 1 - Lieferservice/com/company/Restaurant.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Customer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/DbHelper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Dish.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Ingredient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Models/Ingredient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Location.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Order.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Restaurant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Models/Restaurant.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
