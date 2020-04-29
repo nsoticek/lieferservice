@@ -1,109 +1,104 @@
 package com.company;
 
+import com.company.Controller.*;
+import com.company.DbHelper.*;
+import com.company.Models.*;
+
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
         Restaurant restaurant = new Restaurant("Restaurant");
+        DbConnector dbConnector = new DbConnector();
+        CustomerDb customerDb = new CustomerDb();
+        RegisterDb registerDb = new RegisterDb();
+        LoginDb loginDb = new LoginDb();
         Customer customer = null;
-        String messageLogin = "Willkommen! Haben Sie ein Kundenkonto? (JA/NEIN) ";
 
-        if(inputUserStr(messageLogin).equalsIgnoreCase("Ja")){
-            customer = login(customer);
+        customer = identifyUserMenu(dbConnector, registerDb, loginDb, customerDb);
+
+        while (true) {
+            mainMenu(restaurant, customer, dbConnector);
+        }
+    }
+
+    public static Customer identifyUserMenu(DbConnector dbConnector, RegisterDb registerDb, LoginDb loginDb, CustomerDb customerDb) {
+        Customer customer = null;
+
+        if (inputUser("Willkommen! Haben Sie ein Kundenkonto? (JA/NEIN)").equalsIgnoreCase("Ja")) {
+            // If userInput == yes --> show user the loginFunction
+            customer = LoginController.executeLogin(dbConnector, loginDb, customer);
         } else {
-            customer = registerNewCustomer();
-            boolean isLoactionExisting = restaurant.checkIfLocationAvailable(customer);
-            if (!isLoactionExisting)
-                System.out.println("Wir liefern nicht an deinen Wohnort!");
-        }
-
-        while(true) {
-            mainMenu(restaurant, customer);
-        }
-    }
-
-    private static Customer registerNewCustomer() {
-        String firstName = inputUserStr("Vorname: ");
-        String lastName = inputUserStr("Nachname: ");
-        String city = inputUserStr("Wohnort: ");
-        String adress = inputUserStr("Adresse: ");
-        Customer customer = new Customer(firstName, lastName, city, adress);
-        customer.register();
-        System.out.println("Kundenkonto angelegt.");
-        return customer;
-    }
-
-    private static Customer login(Customer customer) {
-        boolean isLoggedIn = false;
-        while (!isLoggedIn) {
-            int id = inputUser("Geben Sie Ihre Kundennr. ein: ");
-            customer = new Customer(id);
-            isLoggedIn = customer.login();
-            if (isLoggedIn) {
-                System.out.println("Erfolgreich eingeloggt!");
-            } else {
-                System.out.println("Kundennr. existiert nicht! Bitte nochmal versuchen.");
-            }
+            // If userInput == no --> show user the registerFunction
+            customer = RegisterController.executeRegister(dbConnector, registerDb, customerDb);
         }
         return customer;
     }
 
-    private static void mainMenu(Restaurant restaurant, Customer customer) {
+    private static void mainMenu(Restaurant restaurant, Customer customer, DbConnector dbConnector) {
         String messageMenu = "1. Alle Speisen anzeigen \n2. Bestellung aufgeben \n3. Meine Bestellungen anzeigen";
         boolean removeAnotherIngredient;
         boolean addAnotherIngredient;
         boolean anotherDish = true;
 
-        switch (inputUser(messageMenu)) {
-            case 1: // Show dishcard
-                restaurant.showDishcard();
-                break;
-            case 2: // New order
-                Order order = new Order(customer);
+        RestaurantDb restaurantDb = new RestaurantDb();
+        RestaurantController restaurantController = new RestaurantController();
+        IngredientController ingredientController = new IngredientController();
+        DishController dishController = new DishController();
+        DishDb dishDb = new DishDb();
+        OrderDb orderDb = new OrderDb();
 
-                restaurant.showDishcard();
+        switch (inputUser(messageMenu)) {
+            case "1": // Show dishcard
+                restaurantController.showDishcard(restaurantDb, dbConnector);
+                break;
+            case "2": // New order
+                Order order = new Order(customer);
+                order.setLocation(LocationDb.getLocation(customer, dbConnector));
+                restaurantController.showDishcard(restaurantDb, dbConnector);
+
                 while (anotherDish) {
                     // loop for the dish
                     removeAnotherIngredient = true;
                     addAnotherIngredient = true;
-                    int userSelection = inputUser("Was wollen Sie bestellen: ");
-                    Dish dish = new Dish(userSelection);
-                    dish.getIngredientsFromDb();
+
+                    int userSelection = Integer.parseInt(inputUser("Was wollen Sie bestellen: "));
+                    Dish dish = dishController.getDish(userSelection, restaurantDb, dishDb, dbConnector);
+
+                    // loop for the ingredient (to remove) in mainMenu
                     while (removeAnotherIngredient) {
-                        // loop for the ingredient (to remove)
-                        dish.printIngredients();
-                        if (inputUserStr("Möchten Sie eine Zutat entfernen: (JA/NEIN) ").equalsIgnoreCase("Ja")) {
-                            int ingredientId = inputUser("Welche Zutat möchten Sie entfernen: ");
-                            //Ingredient ingredient = new Ingredient(ingredientId);
-                            dish.removeIngredient(ingredientId);
+                        dishController.printIngredientsOfCurrentDish(dishDb, dish, dbConnector);
+                        if (inputUser("Möchten Sie eine Zutat entfernen: (JA/NEIN) ").equalsIgnoreCase("Ja")) {
+                            int ingredientId = Integer.parseInt(inputUser("Welche Zutat möchten Sie entfernen: "));
+                            dishController.removeIngredient(dish, ingredientId);
                         } else {
                             removeAnotherIngredient = false;
                         }
                     }
+                    // loop for the ingredient (to ADD) in mainMenu
                     while (addAnotherIngredient) {
-                        // loop for the ingredient (to remove)
-                        restaurant.printAllIngredients();
-                        if (inputUserStr("Möchten Sie eine Zutat hinzufügen: (JA/NEIN) ").equalsIgnoreCase("Ja")) {
-                            int ingredientId = inputUser("Welche Zutat möchten Sie hinzufügen: ");
-                            Ingredient ingredient = new Ingredient(ingredientId);
+                        restaurantController.printAllIngredients(restaurantDb, dbConnector);
+                        if (inputUser("Möchten Sie eine Zutat hinzufügen: (JA/NEIN) ").equalsIgnoreCase("Ja")) {
+                            int ingredientId = Integer.parseInt(inputUser("Welche Zutat möchten Sie hinzufügen: "));
+                            Ingredient ingredient = ingredientController.getIngredient(ingredientId, restaurantDb, dbConnector);
                             dish.addIngredient(ingredient, order);
                         } else {
                             addAnotherIngredient = false;
                         }
                     }
                     order.addDish(dish);
-                    String userSelectionNewDish = inputUserStr("Möchten Sie noch etwas bestellen: (JA/NEIN)");
-                    if(userSelectionNewDish.equalsIgnoreCase("Nein"))
+                    String userSelectionNewDish = inputUser("Möchten Sie noch etwas bestellen: (JA/NEIN)");
+                    if (userSelectionNewDish.equalsIgnoreCase("Nein"))
                         anotherDish = false;
                 }
-                // create new order and save it to the db
-                order.addOrderToDb();
-                order.printSuccessMessage();
+                // Save order to the db
+                orderDb.insertOrder(order, dbConnector);
+                orderDb.insertDishAndIngredient(order, dbConnector);
                 createInvoice(order, customer);
                 break;
-            case 3: // Show user orders
-                customer.printOrders();
+            case "3": // Show user orders
+                CustomerController.printOrders(orderDb, customer,dbConnector);
                 break;
             default:
                 System.out.println("Ungültige Eingabe!");
@@ -111,25 +106,8 @@ public class Main {
         }
     }
 
-    private static int inputUser(String message) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println(message);
-        int userInput = scanner.nextInt();
-        return userInput;
-    }
-
-    private static String inputUserStr(String message) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println(message);
-        String userInput = scanner.nextLine();
-        return userInput;
-    }
-
     private static void createInvoice(Order order, Customer customer) {
         System.out.println("---------Rechnung----------");
-        // ACHTUNG printf noch anpassen, die Platzhalter!
         for (int i = 0; i < order.getDishes().size(); i++) {
             System.out.printf("%s\t\t%.2f€\n", order.getDishes().get(i).getType(), order.getDishes().get(i).getPrice());
             for (int j = 0; j < order.getDishes().get(i).getIngredients().size(); j++) {
@@ -138,8 +116,15 @@ public class Main {
             }
         }
         System.out.printf("----------------------------");
-        System.out.printf("\nLieferug\t\t\t%.2f€", customer.getLocation().getPrice());
-        System.out.printf("\nGesamt\t\t\t\t%.2f€\n", order.getTotalPrice());
+        System.out.printf("\nGesamt\t\t\t\t%.2f€", order.getTotalPrice());
+        System.out.printf("\nLieferug\t\t\t%.2f€\n", order.getLocation().getPrice());
         System.out.println("----------------------------");
+    }
+
+    private static String inputUser(String message) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
+        String userInput = scanner.nextLine();
+        return userInput;
     }
 }
