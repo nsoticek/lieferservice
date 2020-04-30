@@ -11,52 +11,41 @@ public class Main {
     public static void main(String[] args) {
         Restaurant restaurant = new Restaurant("Restaurant");
         DbConnector dbConnector = new DbConnector();
-        CustomerDb customerDb = new CustomerDb();
-        RegisterDb registerDb = new RegisterDb();
-        LoginDb loginDb = new LoginDb();
-        Customer customer = null;
 
-        customer = identifyUserMenu(dbConnector, registerDb, loginDb, customerDb);
+        Customer customer = identifyUserMenu();
 
         while (true) {
             mainMenu(restaurant, customer, dbConnector);
         }
     }
 
-    public static Customer identifyUserMenu(DbConnector dbConnector, RegisterDb registerDb, LoginDb loginDb, CustomerDb customerDb) {
+    public static Customer identifyUserMenu() {
         Customer customer = null;
 
         if (inputUser("Willkommen! Haben Sie ein Kundenkonto? (JA/NEIN)").equalsIgnoreCase("Ja")) {
             // If userInput == yes --> show user the loginFunction
-            customer = LoginController.executeLogin(dbConnector, loginDb, customer);
+            customer = LoginController.executeLogin();
         } else {
             // If userInput == no --> show user the registerFunction
-            customer = RegisterController.executeRegister(dbConnector, registerDb, customerDb);
+            customer = RegisterController.executeRegister();
         }
         return customer;
     }
 
     private static void mainMenu(Restaurant restaurant, Customer customer, DbConnector dbConnector) {
-        String messageMenu = "1. Alle Speisen anzeigen \n2. Bestellung aufgeben \n3. Meine Bestellungen anzeigen";
+        String messageMenu = "\n1. Alle Speisen anzeigen \n2. Bestellung aufgeben \n3. Meine Bestellungen anzeigen";
         boolean removeAnotherIngredient;
         boolean addAnotherIngredient;
         boolean anotherDish = true;
 
-        RestaurantDb restaurantDb = new RestaurantDb();
-        RestaurantController restaurantController = new RestaurantController();
-        IngredientController ingredientController = new IngredientController();
-        DishController dishController = new DishController();
-        DishDb dishDb = new DishDb();
-        OrderDb orderDb = new OrderDb();
-
         switch (inputUser(messageMenu)) {
             case "1": // Show dishcard
-                restaurantController.showDishcard(restaurantDb, dbConnector);
+                DishController.printDishcard();
                 break;
             case "2": // New order
                 Order order = new Order(customer);
-                order.setLocation(LocationDb.getLocation(customer, dbConnector));
-                restaurantController.showDishcard(restaurantDb, dbConnector);
+                order.setLocation(LocationController.getLocation(customer));
+                DishController.printDishcard();
 
                 while (anotherDish) {
                     // loop for the dish
@@ -64,45 +53,55 @@ public class Main {
                     addAnotherIngredient = true;
 
                     int userSelection = Integer.parseInt(inputUser("Was wollen Sie bestellen: "));
-                    Dish dish = dishController.getDish(userSelection, restaurantDb, dishDb, dbConnector);
-
-                    // loop for the ingredient (to remove) in mainMenu
-                    while (removeAnotherIngredient) {
-                        dishController.printIngredientsOfCurrentDish(dishDb, dish, dbConnector);
-                        if (inputUser("Möchten Sie eine Zutat entfernen: (JA/NEIN) ").equalsIgnoreCase("Ja")) {
-                            int ingredientId = Integer.parseInt(inputUser("Welche Zutat möchten Sie entfernen: "));
-                            dishController.removeIngredient(dish, ingredientId);
-                        } else {
-                            removeAnotherIngredient = false;
-                        }
-                    }
-                    // loop for the ingredient (to ADD) in mainMenu
-                    while (addAnotherIngredient) {
-                        restaurantController.printAllIngredients(restaurantDb, dbConnector);
-                        if (inputUser("Möchten Sie eine Zutat hinzufügen: (JA/NEIN) ").equalsIgnoreCase("Ja")) {
-                            int ingredientId = Integer.parseInt(inputUser("Welche Zutat möchten Sie hinzufügen: "));
-                            Ingredient ingredient = ingredientController.getIngredient(ingredientId, restaurantDb, dbConnector);
-                            dish.addIngredient(ingredient, order);
-                        } else {
-                            addAnotherIngredient = false;
-                        }
-                    }
+                    Dish dish = DishController.getDish(userSelection);
+                    //ask user if he wants to remove an ingredient; if yes, remove it from the ingredient array (class dish)
+                    removeSelectedIngredients(removeAnotherIngredient, dish);
+                    //ask user if he wants to add an ingredient; if yes, add it to the ingredient array (class dish)
+                    addSelectedIngredients(addAnotherIngredient, order, dish);
+                    // Add dish to order
                     order.addDish(dish);
+                    // Ask user if he wants to order additionally another dish
                     String userSelectionNewDish = inputUser("Möchten Sie noch etwas bestellen: (JA/NEIN)");
                     if (userSelectionNewDish.equalsIgnoreCase("Nein"))
                         anotherDish = false;
                 }
                 // Save order to the db
-                orderDb.insertOrder(order, dbConnector);
-                orderDb.insertDishAndIngredient(order, dbConnector);
+                OrderController.insertOrder(order);
                 createInvoice(order);
                 break;
             case "3": // Show user orders
-                CustomerController.printOrders(orderDb, customer,dbConnector);
+                OrderController.printOrders(customer);
                 break;
             default:
                 System.out.println("Ungültige Eingabe!");
                 break;
+        }
+    }
+
+    private static void addSelectedIngredients(boolean addAnotherIngredient, Order order, Dish dish) {
+        // loop for the ingredient (to ADD) in mainMenu
+        while (addAnotherIngredient) {
+            IngredientController.printAllIngredients();
+            if (inputUser("Möchten Sie eine Zutat hinzufügen: (JA/NEIN) ").equalsIgnoreCase("Ja")) {
+                int ingredientId = Integer.parseInt(inputUser("Welche Zutat möchten Sie hinzufügen: "));
+                Ingredient ingredient = IngredientController.getIngredient(ingredientId);
+                dish.addIngredient(ingredient, order);
+            } else {
+                addAnotherIngredient = false;
+            }
+        }
+    }
+
+    private static void removeSelectedIngredients(boolean removeAnotherIngredient, Dish dish) {
+        // loop for the ingredient (to remove) in mainMenu
+        while (removeAnotherIngredient) {
+            DishController.printIngredientsOfCurrentDish(dish);
+            if (inputUser("Möchten Sie eine Zutat entfernen: (JA/NEIN) ").equalsIgnoreCase("Ja")) {
+                int ingredientId = Integer.parseInt(inputUser("Welche Zutat möchten Sie entfernen: "));
+                DishController.removeIngredient(dish, ingredientId);
+            } else {
+                removeAnotherIngredient = false;
+            }
         }
     }
 

@@ -1,24 +1,25 @@
 package com.company.Controller;
 
 import com.company.Models.Customer;
-import com.company.DbHelper.CustomerDb;
-import com.company.DbHelper.DbConnector;
-import com.company.DbHelper.RegisterDb;
+import com.company.DbHelper.RegisterRepository;
 import com.company.Models.RegisterPerson;
 
 import java.util.Scanner;
 
 public class RegisterController {
 
-    public static Customer executeRegister(DbConnector dbConnector, RegisterDb registerDb, CustomerDb customerDb) {
+    public static Customer executeRegister() {
+        // Insert new Person in table 'customer' in DB and return new Customer
+        RegisterRepository registerRepository = new RegisterRepository();
         RegisterPerson registerPerson;
 
         registerPerson = getUserInputAndCreateRegisterPerson();
-        RegisterDb.insertCustomer(registerPerson, dbConnector);
-        customerDb.clearCustomers();
+        registerRepository.create(registerPerson);
         // TODO check if city is existing in DB
 
-        return registerDb.getCustomer(registerPerson, dbConnector);
+        int customerId = registerRepository.getCustomer(registerPerson);
+        return new Customer(customerId, registerPerson.getFirstName(), registerPerson.getLastName(),
+                registerPerson.getCity(), registerPerson.getAdress());
     }
 
     private static RegisterPerson getUserInputAndCreateRegisterPerson() {
@@ -36,7 +37,6 @@ public class RegisterController {
     private static String inputUser(String message) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(message);
-        String userInput = scanner.nextLine();
-        return userInput;
+        return scanner.nextLine();
     }
 }

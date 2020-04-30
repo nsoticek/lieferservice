@@ -5,27 +5,20 @@ import com.company.Models.Customer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class CustomerDb {
+public class CustomerRepository implements IRepository<Customer>{
+    private DbConnector connector;
 
-    private ArrayList<Customer> customers = new ArrayList<>();
-
-    public ArrayList<Customer> getCustomer(DbConnector dbConnector) {
-        if (customers.isEmpty()) {
-            fetchCustomer(dbConnector);
-        }
-        return customers;
+    public CustomerRepository() {
+        this.connector = DbConnector.getInstance();
     }
 
-    public void clearCustomers() {
-        customers.clear();
-    }
+    @Override
+    public List<Customer> findAll() {
+        ArrayList<Customer> customers = new ArrayList<>();
 
-    private void fetchCustomer(DbConnector dbConnector) {
-        // delete all old entries
-        customers.clear();
-
-        ResultSet rs = dbConnector.fetchData("SELECT * FROM customer");
+        ResultSet rs = connector.fetchData("SELECT * FROM customer");
         if (rs == null) {
             System.out.println("Error bei fetchCustomer! Konnte keine Daten abrufen.");
         }
@@ -43,7 +36,18 @@ public class CustomerDb {
             System.out.println("Error bei fetchUser!");
             e.printStackTrace();
         } finally {
-            dbConnector.closeConnection();
+            connector.closeConnection();
         }
+        return customers;
+    }
+
+    @Override
+    public Customer findOne(int id) {
+        return null;
+    }
+
+    @Override
+    public boolean create(Customer entity) {
+        return false;
     }
 }

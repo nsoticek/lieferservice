@@ -1,36 +1,47 @@
 package com.company.Controller;
 
-import com.company.DbHelper.DbConnector;
-import com.company.DbHelper.DishDb;
-import com.company.DbHelper.OrderDb;
-import com.company.DbHelper.RestaurantDb;
+import com.company.DbHelper.*;
 import com.company.Models.Dish;
 import com.company.Models.Ingredient;
+import com.company.View.DishView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DishController {
 
-    public Dish getDish(int dishId, RestaurantDb restaurantDb, DishDb dishDb, DbConnector dbConnector) {
-        // Search if dishId exists; If yes create new Dish with all attributes
-        ArrayList<Dish> dishes = restaurantDb.getDishes(dbConnector);
-        ArrayList<Ingredient> ingredients = dishDb.getIngredients(dishId, dbConnector);
-        Dish dish = null;
+    public static Dish getDish(int dishId) {
+        // Search if dishId exists; If yes create new Dish with all attributes and return it
+        IngredientRepository ingredientRepository = new IngredientRepository();
+        DishRepository dishRepository = new DishRepository();
 
-        for (int i = 0; i < dishes.size(); i++) {
-            if(dishes.get(i).getId() == dishId) {
-                dish = new Dish(dishId, dishes.get(i).getType(), dishes.get(i).getPrice());
-            }
-        }
+        Dish dish = dishRepository.findOne(dishId);
+        List<Ingredient> ingredients = ingredientRepository.getIngredients(dishId);
 
         // Add all related ingredients (from DB) to the dish
-        for (int i = 0; i < ingredients.size(); i++) {
-            dish.addIngredient(ingredients.get(i));
+        for (Ingredient ingredient : ingredients) {
+            dish.addIngredient(ingredient);
         }
         return dish;
     }
 
-    public void removeIngredient(Dish dish, int ingredientId) {
+    public static void printIngredientsOfCurrentDish(Dish dish) {
+        DishView dishView = new DishView();
+        ArrayList<Ingredient> ingredients = dish.getIngredients();
+
+        dishView.printIngredientsOfCurrentDish(ingredients);
+    }
+
+    public static void printDishcard() {
+        DishRepository dishRepository = new DishRepository();
+        DishView dishView = new DishView();
+
+        List<Dish> dishes = dishRepository.findAll();
+        dishView.printDishcard(dishes);
+
+    }
+
+    public static void removeIngredient(Dish dish, int ingredientId) {
         // Remove ingredient if user wants; The ingredient will be removed from the ingredientArrayList in Dish
         ArrayList<Ingredient> ingredients = dish.getIngredients();
 
@@ -38,18 +49,7 @@ public class DishController {
             if(ingredients.get(i).getId() == ingredientId) {
                 ingredients.remove(i);
                 dish.setIngredients(ingredients);
-            } else {
-                System.out.println("Der Artikel konnte nicht gefunden werden");
             }
-        }
-    }
-
-    public void printIngredientsOfCurrentDish(DishDb dishDb, Dish dish, DbConnector dbConnector) {
-        ArrayList<Ingredient> ingredients = dish.getIngredients();
-
-        for (int i = 0; i < ingredients.size(); i++) {
-            System.out.println(ingredients.get(i).getId() + ". " + ingredients.get(i).getType() + " " +
-                    ingredients.get(i).getPrice());
         }
     }
 }

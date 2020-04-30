@@ -1,24 +1,26 @@
 package com.company.Controller;
 
-import com.company.DbHelper.DbConnector;
-import com.company.DbHelper.RestaurantDb;
-import com.company.Models.Dish;
+import com.company.DbHelper.IngredientRepository;
 import com.company.Models.Ingredient;
+import com.company.View.IngredientView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class IngredientController {
 
-    public Ingredient getIngredient(int ingredientId, RestaurantDb restaurantDb, DbConnector dbConnector) {
+    public static Ingredient getIngredient(int ingredientId) {
         // Search if ingredient exists; If yes create new ingredient with all attributes
-        ArrayList<Ingredient> ingredients = restaurantDb.getIngredients(dbConnector);
-        Ingredient ingredient = null;
+        IngredientRepository ingredientRepository = new IngredientRepository();
 
-        for (int i = 0; i < ingredients.size(); i++) {
-            if(ingredients.get(i).getId() == ingredientId) {
-                ingredient = new Ingredient(ingredientId, ingredients.get(i).getType(), ingredients.get(i).getPrice());
-            }
-        }
-        return ingredient;
+        return ingredientRepository.findOne(ingredientId);
+    }
+
+    public static void printAllIngredients() {
+        // Print all available ingredients
+        IngredientView ingredientView = new IngredientView();
+        IngredientRepository ingredientRepository = new IngredientRepository();
+
+        List<Ingredient> ingredients = ingredientRepository.findAll();
+        ingredientView.printAllIngredients(ingredients);
     }
 }

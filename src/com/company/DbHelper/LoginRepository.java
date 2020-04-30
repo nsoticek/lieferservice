@@ -6,12 +6,17 @@ import com.company.Models.LoginPerson;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class LoginDb {
+public class LoginRepository {
+    private DbConnector connector;
 
-    public static boolean isExisting(LoginPerson loginPerson, DbConnector dbConnector) {
+    public LoginRepository() {
+        this.connector = DbConnector.getInstance();
+    }
+
+    public boolean isExisting(LoginPerson loginPerson) {
         // Check if username and password are matching with DB data, if yes return true;
         boolean isPersonExisting = false;
-        ResultSet rs = dbConnector.fetchData("SELECT id FROM customer " +
+        ResultSet rs = connector.fetchData("SELECT id FROM customer " +
                 "WHERE id = " + loginPerson.getId() + " AND password = '" + loginPerson.getPassword() + "'");
         if (rs == null) {
             System.out.println("Error bei loginAbfrage! Konnte keine Daten abrufen.");
@@ -25,15 +30,15 @@ public class LoginDb {
         } catch (SQLException e) {
             System.out.println("Error bei login!");
         } finally {
-            dbConnector.closeConnection();
+             connector.closeConnection();
         }
         return isPersonExisting;
     }
 
-    public Customer getPersonFromDb(LoginPerson loginPerson, DbConnector dbConnector) {
+    public Customer getPersonFromDb(LoginPerson loginPerson) {
         Customer customer = null;
 
-        ResultSet rs = dbConnector.fetchData("SELECT * FROM customer " +
+        ResultSet rs = connector.fetchData("SELECT * FROM customer " +
                 "WHERE id = " + loginPerson.getId() + " AND password = '" + loginPerson.getPassword() + "'");
         if (rs == null) {
             System.out.println("Error bei getPersonFromDb! Konnte keine Daten abrufen.");
@@ -52,7 +57,7 @@ public class LoginDb {
             System.out.println("Error bei fetchUser!");
             e.printStackTrace();
         } finally {
-            dbConnector.closeConnection();
+            connector.closeConnection();
         }
         return customer;
     }

@@ -1,32 +1,33 @@
 package com.company.Controller;
 
 import com.company.Models.Customer;
-import com.company.DbHelper.DbConnector;
-import com.company.DbHelper.LoginDb;
+import com.company.DbHelper.LoginRepository;
 import com.company.Models.LoginPerson;
 
 import java.util.Scanner;
 
 public class LoginController {
 
-    public static Customer executeLogin(DbConnector dbConnector, LoginDb loginDb, Customer customer) {
+    public static Customer executeLogin() {
+        LoginRepository loginRepository = new LoginRepository();
         LoginPerson loginPerson;
+        Customer customer = null;
         boolean isLoggedIn = false;
 
         while (!isLoggedIn) {
             // Get userInput and create a loginPerson;
             loginPerson = getUserInputAndCreateLoginPerson();
             // Check if user exists in DB and check if password is matching
-            isLoggedIn = LoginController.isUserExisting(loginPerson, dbConnector);
+            isLoggedIn = LoginController.isUserExisting(loginPerson, loginRepository);
             // Get all attributs from DB and create Customer with all attributs
-            customer = loginDb.getPersonFromDb(loginPerson, dbConnector);
+            customer = loginRepository.getPersonFromDb(loginPerson);
         }
         return customer;
     }
 
-    public static boolean isUserExisting(LoginPerson loginPerson, DbConnector dbConnector) {
+    public static boolean isUserExisting(LoginPerson loginPerson, LoginRepository loginRepository) {
         // Check in Db if user exists; if yes - return true in 'isPersonExisting'
-        boolean isPersonExisting = LoginDb.isExisting(loginPerson, dbConnector);
+        boolean isPersonExisting = loginRepository.isExisting(loginPerson);
         if (isPersonExisting)
             System.out.println("Erfolgreich eingeloggt");
         else
@@ -43,7 +44,6 @@ public class LoginController {
     private static String inputUser(String message) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(message);
-        String userInput = scanner.nextLine();
-        return userInput;
+        return scanner.nextLine();
     }
 }
